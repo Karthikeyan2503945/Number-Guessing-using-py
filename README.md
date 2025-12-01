@@ -28,8 +28,8 @@ If the file doesn’t exist or contains invalid text, the program resets the hig
 ## Purpose of the Project
 
 This project is ideal for learning:
- **File handling
- **Input validation
- **Random number generation
- **Control structures (if, loops, exceptions)
- **Basic game logic
+ * File handling
+ * Input validation
+ * Random number generation
+ * Control structures (if, loops, exceptions)
+  * Basic game logic
