@@ -1,0 +1,112 @@
+import random
+import os
+
+#Initial Setup
+SCORE_FILE = "highscore.txt"
+MIN_RANGE = 1
+MAX_RANGE = 100
+
+def load_highscore():
+    """
+    Loads the current high score from the file. 
+    If the file doesn't exist or is invalid, it returns infinity.
+    """
+    try:
+        if os.path.exists(SCORE_FILE):
+            with open(SCORE_FILE, 'r') as f:
+                content = f.read().strip()
+                if content.isdigit():     # safer validation
+                    return int(content)
+                else:
+                    print(f"Warning: Score file '{SCORE_FILE}' contains invalid data. Resetting high score.")
+        return float('inf')
+    except Exception as e:
+        print(f"An error occurred while loading high score: {e}")
+        return float('inf')
+
+def save_highscore(new_score):
+
+    """
+    Saves a new high score to the file.
+    """
+    try:
+        with open(SCORE_FILE, 'w') as f:
+            f.write(str(new_score))
+        print(f"New High Score Saved: {new_score} guesses!")
+    except Exception as e:
+        print(f"Error saving high score: {e}")
+
+def get_valid_guess():
+
+    """
+    Prompts the user for a guess and validates that it is an integer
+    within the defined range (1 to 100).
+    """
+    while True:
+        try:
+            guess_input = input(f"Enter your guess ({MIN_RANGE}-{MAX_RANGE}): ")
+            guess = int(guess_input)
+
+            # Control Structure: Check if the guess is within the valid range
+            if MIN_RANGE <= guess <= MAX_RANGE:
+                return guess
+            else:
+                print(f"Please enter a number between {MIN_RANGE} and {MAX_RANGE}.")
+
+        except ValueError:
+            print("Invalid input. Please enter a whole number.")
+        except KeyboardInterrupt:
+            print("\nGame interrupted. Exiting input.")
+            return None 
+
+def play_game():
+
+    """
+    Main function to run the Number Guessing Game.
+    """
+    print("\n--- Python Number Guessing Game ---")
+    print(f"I am thinking of a number between {MIN_RANGE} and {MAX_RANGE}.")
+
+    # Generate a random integer as the target number
+    secret_number = random.randint(MIN_RANGE, MAX_RANGE)
+
+    # Initialize the guess counter
+    guess_count = 0
+
+    # Load the current high score
+    current_highscore = load_highscore()
+    if current_highscore != float('inf'):
+        print(f"Current High Score (fewest guesses): {current_highscore}")
+    else:
+        print("No high score set yet. Be the first!")
+
+    guess = None
+
+    # Control Structure: Main game loop
+    while guess != secret_number:
+        guess = get_valid_guess()
+
+        # Check for interruption
+        if guess is None:
+            print(f"\nGame aborted. The secret number was {secret_number}.")
+            return
+
+        guess_count += 1
+
+        # Provide hints
+        if guess < secret_number:
+            print("⬆️ Too Low! Try again.")
+        elif guess > secret_number:
+            print("⬇️ Too High! Try again.")
+
+    # Game won.
+    print(f"\nCongratulations! You guessed the number {secret_number} in {guess_count} guesses!")
+
+    # Check for and save new high score
+    if guess_count < current_highscore:
+        save_highscore(guess_count)
+    else:
+        print("Keep practicing to beat the current high score!")
+
+if __name__ == "__main__":
+    play_game()
